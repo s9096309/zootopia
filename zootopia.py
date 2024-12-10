@@ -1,53 +1,58 @@
 import json
 
+
+# Load the JSON data
 def load_data(file_path):
-    """Loads a JSON file."""
     with open(file_path, "r") as handle:
         return json.load(handle)
 
+
+# Generate HTML for the animals
 def generate_animals_html(data):
-    """Generates the HTML content for the animals' data."""
     animals_html = ""
     for animal in data:
         name = animal.get("name", "Unknown")
+        diet = animal.get("characteristics", {}).get("diet", "Unknown")
         locations = ", ".join(animal.get("locations", []))
-        characteristics = animal.get("characteristics", {})
-        diet = characteristics.get("diet", "Unknown")
-        type_value = characteristics.get("type", "Unknown")
+        type_ = animal.get("characteristics", {}).get("type", "Unknown")
 
         animals_html += f"""
         <li class="cards__item">
-            Name: {name}<br/>
-            Diet: {diet}<br/>
-            Location: {locations or "Unknown"}<br/>
-            Type: {type_value}<br/>
+            <div class="card__title">{name}</div>
+            <p class="card__text">
+                <strong>Diet:</strong> {diet}<br/>
+                <strong>Location:</strong> {locations}<br/>
+                <strong>Type:</strong> {type_}<br/>
+            </p>
         </li>
         """
     return animals_html
 
-def generate_html(template_path, output_path, animals_data):
-    """Generates a new HTML file by replacing a placeholder in the template."""
-    # Read the HTML template
-    with open(template_path, "r") as template_file:
-        template_content = template_file.read()
 
-    # Generate the animals HTML
+# Update the template and save the final HTML
+def create_animals_html(input_json, template_file, output_file):
+    # Load data
+    animals_data = load_data(input_json)
+
+    # Generate animals' HTML
     animals_html = generate_animals_html(animals_data)
 
-    # Replace the placeholder with the generated animals' HTML
-    final_html = template_content.replace("__REPLACE_ANIMALS_INFO__", animals_html)
+    # Read the template
+    with open(template_file, "r") as file:
+        template_content = file.read()
 
-    # Write the final HTML content to a new file
-    with open(output_path, "w") as output_file:
-        output_file.write(final_html)
+    # Replace the placeholder
+    updated_content = template_content.replace("__REPLACE_ANIMALS_INFO__", animals_html)
 
-# Paths to the files
-template_path = "animals_template.html"
-output_path = "animals.html"
-json_path = "animals_data.json"
+    # Write to a new HTML file
+    with open(output_file, "w") as file:
+        file.write(updated_content)
 
-# Load data and generate the HTML
-animals_data = load_data(json_path)
-generate_html(template_path, output_path, animals_data)
 
-print(f"HTML file has been generated: {output_path}")
+# File paths
+input_json = "animals_data.json"
+template_file = "animals_template.html"
+output_file = "animals.html"
+
+# Create the HTML
+create_animals_html(input_json, template_file, output_file)
