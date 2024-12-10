@@ -1,5 +1,5 @@
 import json
-# load animals from JSON file
+
 
 def load_data(file_path):
   """ Loads a JSON file """
@@ -8,21 +8,23 @@ def load_data(file_path):
 
 animals_data = load_data('animals_data.json')
 
-for animal in animals_data:
-        if 'Name' in animal:
-            print(f"Name: {animal['Name']}")
-        if 'Diet' in animal:
-            print(f"Diet: {animal['Diet']}")
-        if 'locations' in animal and animal['locations']:
-            print(f"First Location: {animal['locations'][0]}")
-        if 'Type' in animal:
-            print(f"Type: {animal['Type']}")
 
-# name
-# diet
-# first location from locations list
-# type
+def print_animal_info(data):
+    """Function to extract and print the data for each animal"""
+    for animal in animals_data:
+        name = animal.get("name", "Unknown")
+        locations = ", ".join(animal.get("locations", []))
+        characteristics = animal.get("characteristics", {})
+        common_name = characteristics.get("common_name", "Unknown")
+        diet = characteristics.get("diet", "Unknown")
+        lifespan = characteristics.get("lifespan", "Unknown")
 
+        print(f"Name: {name}")
+        print(f"Common Name: {common_name}")
+        print(f"Locations: {locations}")
+        print(f"Diet: {diet}")
+        print(f"Lifespan: {lifespan}")
+        print("-" * 40)
 
-
-print(animals_data)
+# Aufrufen der Funktion
+print_animal_info(animals_data)
